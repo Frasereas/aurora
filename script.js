@@ -20,17 +20,19 @@ function updateText(newText,posx,posy,element) {
   element.classList.add("fade-in");
 }
 
-function setup() {
-    createCanvas(windowWidth,windowHeight)
+let cat;
+function preload() {
+  cat = loadImage("devious.gif");
 }
 
-function preload(){
-  url = "catdevious.gif"
-  img = loadImage(url)
+function setup() {
+    createCanvas(windowWidth,windowHeight)
+    console.log(cat);
 }
 
 function draw() {
-    let seconds=millis()/20/60
+    background(225);
+    let seconds=millis()/1000
     console.log(seconds)
     
     if (seconds>2) {
@@ -44,6 +46,6 @@ function draw() {
 
     if (seconds>10) {
     updateText("You shouldnt of clicked on this",windowWidth/2,windowHeight/2,maintxt)
-    image(img, windowWidth/2, windowHeight/2);
+    image(cat, 100, 100)
     }
 }
