@@ -24,6 +24,7 @@ const stackedLines = [
   "I hope this year treats you just as well as you treat me",
   "and if it doesnt, just remember,",
   "you have me, and I will always be here for you",
+  "also there will be another present for you in about 2 months",
   "I love you beautiful, and I hope you have a wonderful birthday",
   "-Fredrick winkle bottom",
   "",
@@ -36,7 +37,7 @@ let stackLastUpdate = 0;
 const stackInterval = 2200; // ms between new lines
 const stackMaxLines = 3;
 let stackContainer;
-let stackElements = []; // currently visible line elements
+const stackedLinesFontSize = "clamp(1rem, 5vw, 40px)"; // Adjustable font size for stacked lines
 
 function updateText(newText,posx,posy,element) {
   if (!element) return;
@@ -67,6 +68,10 @@ function setup() {
       alpha: random(50, 255)
     });
   }
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
 }
 
 function draw() {
@@ -127,6 +132,11 @@ function draw() {
       img.style.left = Math.random() * maxX + "px";
       img.style.top = Math.random() * maxY + "px";
 
+      // remove after 3 seconds
+      setTimeout(() => {
+        img.remove();
+      }, 3000);
+
       document.body.appendChild(img);
 
       hack++;
@@ -149,7 +159,6 @@ function draw() {
     setTimeout(() => {
       img.remove();
     }, 3000);
-
   }
 
   if (seconds > 23 && seconds < 29) {
@@ -218,6 +227,11 @@ function draw() {
   }
 
   if (seconds > 50) {
+    if (windowWidth <500) {
+      stackMaxLines = 2;
+      stackedLinesFontSize = "clamp(0.8rem, 4vw, 32px)";
+    }
+
     background("#272727");
 
     fill("#efefef")
@@ -233,8 +247,7 @@ function draw() {
     }
     drawSand();
 
-    // stack lines where new lines fade in below the previous,
-    // and older lines fade out after a few have appeared.
+    // display all lines sequentially
     if (!stackContainer) {
       stackContainer = document.createElement("div");
       stackContainer.className = "line-container";
@@ -244,30 +257,15 @@ function draw() {
       maintxt.style.display = "none";
       othertxt.style.display = "none";
 
-    }
-
-    const now = millis();
-    if (now - stackLastUpdate > stackInterval) {
-      stackLastUpdate = now;
-
-      // add a new line element
-      const line = document.createElement("p");
-      line.textContent = stackedLines[stackIndex];
-      line.className = "fade-in";
-      stackContainer.appendChild(line);
-      stackElements.push(line);
-
-      stackIndex = (stackIndex + 1) % stackedLines.length;
-
-      // keep only the most recent N lines visible; fade & remove oldest
-      if (stackElements.length > stackMaxLines) {
-        const old = stackElements.shift();
-        old.classList.remove("fade-in");
-        old.classList.add("fade-out");
-
+      // append all lines with delay
+      for (let i = 0; i < stackedLines.length; i++) {
         setTimeout(() => {
-          old.remove();
-        }, 800); // match fade-out duration
+          const line = document.createElement("p");
+          line.textContent = stackedLines[i];
+          line.className = "fade-in";
+          line.style.fontSize = stackedLinesFontSize;
+          stackContainer.appendChild(line);
+        }, i * 500); // 500ms delay between each line
       }
     }
   }
