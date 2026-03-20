@@ -131,13 +131,12 @@ function draw() {
 
       img.style.left = Math.random() * maxX + "px";
       img.style.top = Math.random() * maxY + "px";
+      
+      document.body.appendChild(img);
 
-      // remove after 3 seconds
       setTimeout(() => {
         img.remove();
       }, 3000);
-
-      document.body.appendChild(img);
 
       hack++;
     }
